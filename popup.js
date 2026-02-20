@@ -139,6 +139,24 @@ const runInlineMediaScan = async (tabId) => {
         addResult(out, seen, match[1], "other", "Page media URL");
       }
 
+      const resourceEntries = performance.getEntriesByType("resource") || [];
+      for (const entry of resourceEntries) {
+        const entryUrl = entry?.name || "";
+        if (!entryUrl) {
+          continue;
+        }
+
+        const kind = inferKind(entryUrl, "");
+        if (kind !== "other") {
+          addResult(out, seen, entryUrl, kind, "Performance media URL");
+          continue;
+        }
+
+        if (/(m3u8|playlist|manifest|hls)/i.test(entryUrl)) {
+          addResult(out, seen, entryUrl, "hls", "Performance media URL");
+        }
+      }
+
       return out;
     }
   });

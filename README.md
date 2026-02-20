@@ -13,7 +13,8 @@ This extension scans the current tab for HTML5 video sources and lets you send M
   - `application/x-mpegurl`
 - Saves Roku IP to Chrome sync storage.
 - Uses an inline fallback scanner from the popup when a content script is not attached (avoids "Receiving end does not exist" on many pages).
-- Also captures direct MP4/HLS URLs from tab network requests (helps with players that do not expose `<video>` sources directly).
+- Inline scan also checks browser performance resource entries to recover media URLs requested by script-driven players.
+- Also captures direct MP4/HLS URLs from tab network requests and response headers (helps with players that do not expose `<video>` sources directly).
 - Sends video URLs using Roku ECP with two fallback methods:
   - `POST /launch/15985?...`
   - `POST /input/15985?...`

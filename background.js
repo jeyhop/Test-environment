@@ -1,21 +1,48 @@
 const ROKU_ECP_PORT = 8060;
 const PLAY_ON_ROKU_APP_ID = 15985;
-const MAX_MEDIA_PER_TAB = 80;
+const MAX_MEDIA_PER_TAB = 120;
 
 const tabMedia = new Map();
 
+const HLS_CONTENT_TYPE_HINTS = ["application/vnd.apple.mpegurl", "application/x-mpegurl"];
+const MP4_CONTENT_TYPE_HINTS = ["video/mp4"];
+
+const hasAnyHint = (value, hints) => {
+  const normalized = String(value || "").toLowerCase();
+  return hints.some((hint) => normalized.includes(hint));
+};
+
 const isMp4Url = (url) => /\.mp4(\?|#|$)/i.test(url || "");
 const isHlsUrl = (url) => /\.m3u8(\?|#|$)/i.test(url || "");
-const inferKind = (url) => (isHlsUrl(url) ? "hls" : isMp4Url(url) ? "mp4" : "other");
+const hasHlsUrlHint = (url) => /(m3u8|playlist|manifest|hls)/i.test(url || "");
+const hasMp4UrlHint = (url) => /(mp4|video|stream)/i.test(url || "");
 
-const pushDetectedMedia = (tabId, url, source = "network") => {
+const inferKindFromUrlAndType = (url, contentType = "") => {
+  if (isHlsUrl(url) || hasAnyHint(contentType, HLS_CONTENT_TYPE_HINTS)) {
+    return "hls";
+  }
+
+  if (isMp4Url(url) || hasAnyHint(contentType, MP4_CONTENT_TYPE_HINTS)) {
+    return "mp4";
+  }
+
+  return "other";
+};
+
+const pushDetectedMedia = (tabId, url, source = "network", contentType = "") => {
   if (typeof tabId !== "number" || tabId < 0 || !url) {
     return;
   }
 
-  const kind = inferKind(url);
+  let kind = inferKindFromUrlAndType(url, contentType);
   if (kind === "other") {
-    return;
+    if (source === "headers" && hasHlsUrlHint(url)) {
+      kind = "hls";
+    } else if (source === "headers" && hasMp4UrlHint(url)) {
+      kind = "mp4";
+    } else {
+      return;
+    }
   }
 
   const current = tabMedia.get(tabId) || [];
@@ -26,10 +53,11 @@ const pushDetectedMedia = (tabId, url, source = "network") => {
   const next = [
     {
       id: `${kind}-${url}`,
-      title: source === "network" ? "Detected from network request" : "Detected media",
+      title: source === "headers" ? "Detected from response headers" : "Detected from network request",
       url,
       kind,
-      source
+      source,
+      contentType
     },
     ...current
   ].slice(0, MAX_MEDIA_PER_TAB);
@@ -45,6 +73,22 @@ chrome.webRequest.onBeforeRequest.addListener(
     urls: ["http://*/*", "https://*/*"],
     types: ["media", "xmlhttprequest", "other"]
   }
+);
+
+chrome.webRequest.onHeadersReceived.addListener(
+  (details) => {
+    const contentTypeHeader = (details.responseHeaders || []).find(
+      (header) => header.name?.toLowerCase() === "content-type"
+    );
+
+    const contentType = contentTypeHeader?.value || "";
+    pushDetectedMedia(details.tabId, details.url, "headers", contentType);
+  },
+  {
+    urls: ["http://*/*", "https://*/*"],
+    types: ["media", "xmlhttprequest", "other"]
+  },
+  ["responseHeaders"]
 );
 
 chrome.tabs.onRemoved.addListener((tabId) => {
