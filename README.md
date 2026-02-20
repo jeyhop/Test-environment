@@ -12,6 +12,7 @@ This extension scans the current tab for HTML5 video sources and lets you send M
   - `application/vnd.apple.mpegurl`
   - `application/x-mpegurl`
 - Saves Roku IP to Chrome sync storage.
+- Uses an inline fallback scanner from the popup when a content script is not attached (avoids "Receiving end does not exist" on many pages).
 - Sends video URLs using Roku ECP with two fallback methods:
   - `POST /launch/15985?...`
   - `POST /input/15985?...`
