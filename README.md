@@ -1,10 +1,16 @@
 # Roku Video Detector & Cast (Chrome Extension)
 
-This extension scans the current tab for HTML5 `<video>` sources and lets you send one directly to your Roku TV.
+This extension scans the current tab for HTML5 video sources and lets you send MP4 or HLS (`.m3u8`) links directly to your Roku TV.
 
 ## Features
 
-- Detects media URLs from `<video src>`, `video.currentSrc`, and nested `<source>` tags.
+- Detects **MP4** and **HLS** URLs from:
+  - `<video src>`
+  - `video.currentSrc`
+  - nested `<source src type="...">`
+- Recognizes HLS using both URL extension (`.m3u8`) and HLS MIME types:
+  - `application/vnd.apple.mpegurl`
+  - `application/x-mpegurl`
 - Saves Roku IP to Chrome sync storage.
 - Sends video URLs using Roku ECP with two fallback methods:
   - `POST /launch/15985?...`
@@ -19,14 +25,14 @@ This extension scans the current tab for HTML5 `<video>` sources and lets you se
 
 ## Usage
 
-1. Visit a page with HTML5 video.
+1. Visit a page with HTML5 MP4 or HLS video.
 2. Click the extension icon.
 3. Enter your Roku TV IP (for example `192.168.1.50`) and click **Save**.
-4. Click **Refresh** to detect videos.
+4. Click **Refresh** to detect sources.
 5. Click **Cast** on a detected entry.
 
 ## Notes / Limitations
 
-- It can only detect videos exposed in the page DOM (`<video>` tags).
-- DRM streams, blob URLs, and some site-protected streams may not play on Roku.
+- It only detects HTML5 media exposed in the page DOM (`<video>` / `<source>`).
+- DRM streams, blob URLs, and heavily protected player pipelines may not cast.
 - Your Chrome machine and Roku must be on the same local network.

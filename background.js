@@ -13,16 +13,21 @@ const buildRokuUrl = (ip, pathWithQuery = "") => {
 
 const postRoku = async (ip, pathWithQuery) => {
   const endpoint = buildRokuUrl(ip, pathWithQuery);
-  const response = await fetch(endpoint, {
-    method: "POST"
-  });
+  const response = await fetch(endpoint, { method: "POST" });
+
+  if (!response.ok) {
+    throw new Error(`Roku request failed (${response.status}) for ${endpoint}`);
+  }
 
   return response;
 };
 
-const tryLaunchViaRokuChannel = async (ip, videoUrl) => {
+const getRokuMediaType = (kind) => (kind === "hls" ? "live" : "movie");
+
+const tryLaunchViaRokuChannel = async (ip, videoUrl, kind) => {
   const encoded = encodeURIComponent(videoUrl);
-  const launchPath = `/launch/${PLAY_ON_ROKU_APP_ID}?mediaType=movie&contentID=${encoded}`;
+  const mediaType = getRokuMediaType(kind);
+  const launchPath = `/launch/${PLAY_ON_ROKU_APP_ID}?mediaType=${mediaType}&contentID=${encoded}`;
   await postRoku(ip, launchPath);
 };
 
@@ -38,24 +43,19 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   }
 
   (async () => {
-    const { rokuIp, videoUrl } = message.payload || {};
+    const { rokuIp, videoUrl, kind } = message.payload || {};
 
     if (!videoUrl) {
       throw new Error("No video URL provided.");
     }
 
     try {
-      await tryLaunchViaRokuChannel(rokuIp, videoUrl);
+      await tryLaunchViaRokuChannel(rokuIp, videoUrl, kind);
       sendResponse({ ok: true, method: "launch" });
       return;
     } catch (_launchError) {
-      try {
-        await tryLaunchViaInputEndpoint(rokuIp, videoUrl);
-        sendResponse({ ok: true, method: "input" });
-        return;
-      } catch (inputError) {
-        throw inputError;
-      }
+      await tryLaunchViaInputEndpoint(rokuIp, videoUrl);
+      sendResponse({ ok: true, method: "input" });
     }
   })().catch((error) => {
     sendResponse({

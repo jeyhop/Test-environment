@@ -1,4 +1,12 @@
 (() => {
+  const HLS_MIME_TYPES = new Set([
+    "application/vnd.apple.mpegurl",
+    "application/x-mpegurl"
+  ]);
+
+  const isMp4Url = (url) => /\.mp4(\?|#|$)/i.test(url);
+  const isHlsUrl = (url) => /\.m3u8(\?|#|$)/i.test(url);
+
   const normalizeUrl = (url) => {
     if (!url || typeof url !== "string") {
       return null;
@@ -11,59 +19,74 @@
     }
   };
 
-  const pickBestSource = (videoEl) => {
-    const candidateUrls = [];
+  const inferKind = (url, mimeType = "") => {
+    const normalizedType = (mimeType || "").toLowerCase().trim();
+
+    if (isHlsUrl(url) || HLS_MIME_TYPES.has(normalizedType)) {
+      return "hls";
+    }
+
+    if (isMp4Url(url) || normalizedType === "video/mp4") {
+      return "mp4";
+    }
+
+    return "other";
+  };
+
+  const detectVideoCandidates = (videoEl) => {
+    const candidates = [];
 
     if (videoEl.currentSrc) {
-      candidateUrls.push(videoEl.currentSrc);
+      candidates.push({ url: videoEl.currentSrc, mimeType: videoEl.getAttribute("type") || "" });
     }
 
     if (videoEl.src) {
-      candidateUrls.push(videoEl.src);
+      candidates.push({ url: videoEl.src, mimeType: videoEl.getAttribute("type") || "" });
     }
 
     const sourceChildren = Array.from(videoEl.querySelectorAll("source"));
     for (const sourceEl of sourceChildren) {
       if (sourceEl.src) {
-        candidateUrls.push(sourceEl.src);
+        candidates.push({ url: sourceEl.src, mimeType: sourceEl.type || "" });
       }
     }
 
-    for (const candidate of candidateUrls) {
-      const normalized = normalizeUrl(candidate);
-      if (normalized) {
-        return normalized;
-      }
-    }
-
-    return null;
+    return candidates;
   };
 
   const collectVideos = () => {
     const seen = new Set();
     const results = [];
-
     const videos = Array.from(document.querySelectorAll("video"));
+
     for (const [index, videoEl] of videos.entries()) {
-      const videoUrl = pickBestSource(videoEl);
-      if (!videoUrl || seen.has(videoUrl)) {
-        continue;
-      }
-
-      seen.add(videoUrl);
-
       const title =
         videoEl.getAttribute("title") ||
         videoEl.getAttribute("aria-label") ||
         document.title ||
         `Video ${index + 1}`;
 
-      results.push({
-        id: `${index}-${videoUrl}`,
-        title,
-        url: videoUrl,
-        pageUrl: window.location.href
-      });
+      for (const candidate of detectVideoCandidates(videoEl)) {
+        const normalized = normalizeUrl(candidate.url);
+        if (!normalized || seen.has(normalized)) {
+          continue;
+        }
+
+        const kind = inferKind(normalized, candidate.mimeType);
+        if (kind === "other") {
+          continue;
+        }
+
+        seen.add(normalized);
+
+        results.push({
+          id: `${index}-${normalized}`,
+          title,
+          url: normalized,
+          kind,
+          pageUrl: window.location.href
+        });
+      }
     }
 
     return results;

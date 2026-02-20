@@ -29,7 +29,9 @@ const requestVideosFromTab = async (tabId) => {
   return response?.videos || [];
 };
 
-const castToRoku = async (videoUrl) => {
+const castToRoku = async (video) => {
+  const videoUrl = video.url;
+  const kind = video.kind;
   const rokuIp = rokuIpInput.value.trim();
   if (!rokuIp) {
     throw new Error("Save your Roku IP first.");
@@ -37,7 +39,7 @@ const castToRoku = async (videoUrl) => {
 
   const response = await chrome.runtime.sendMessage({
     type: "CAST_TO_ROKU",
-    payload: { rokuIp, videoUrl }
+    payload: { rokuIp, videoUrl, kind }
   });
 
   if (!response?.ok) {
@@ -61,7 +63,7 @@ const createVideoNode = (video) => {
     setStatus(`Casting: ${video.title || video.url}`);
 
     try {
-      const method = await castToRoku(video.url);
+      const method = await castToRoku(video);
       setStatus(`Sent to Roku using method: ${method}`);
     } catch (error) {
       setStatus(error.message, true);
@@ -78,7 +80,7 @@ const renderVideos = (videos) => {
 
   if (!videos.length) {
     const empty = document.createElement("li");
-    empty.textContent = "No <video> sources detected on this page.";
+    empty.textContent = "No MP4/HLS HTML5 sources detected on this page.";
     videoListEl.append(empty);
     return;
   }
@@ -99,7 +101,7 @@ const refreshVideos = async () => {
 
     const videos = await requestVideosFromTab(tab.id);
     renderVideos(videos);
-    setStatus(`Found ${videos.length} video(s).`);
+    setStatus(`Found ${videos.length} MP4/HLS source(s).`);
   } catch (error) {
     renderVideos([]);
     setStatus(`Could not scan this tab: ${error.message}`, true);
