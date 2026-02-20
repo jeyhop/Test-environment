@@ -1,5 +1,55 @@
 const ROKU_ECP_PORT = 8060;
 const PLAY_ON_ROKU_APP_ID = 15985;
+const MAX_MEDIA_PER_TAB = 80;
+
+const tabMedia = new Map();
+
+const isMp4Url = (url) => /\.mp4(\?|#|$)/i.test(url || "");
+const isHlsUrl = (url) => /\.m3u8(\?|#|$)/i.test(url || "");
+const inferKind = (url) => (isHlsUrl(url) ? "hls" : isMp4Url(url) ? "mp4" : "other");
+
+const pushDetectedMedia = (tabId, url, source = "network") => {
+  if (typeof tabId !== "number" || tabId < 0 || !url) {
+    return;
+  }
+
+  const kind = inferKind(url);
+  if (kind === "other") {
+    return;
+  }
+
+  const current = tabMedia.get(tabId) || [];
+  if (current.some((item) => item.url === url)) {
+    return;
+  }
+
+  const next = [
+    {
+      id: `${kind}-${url}`,
+      title: source === "network" ? "Detected from network request" : "Detected media",
+      url,
+      kind,
+      source
+    },
+    ...current
+  ].slice(0, MAX_MEDIA_PER_TAB);
+
+  tabMedia.set(tabId, next);
+};
+
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    pushDetectedMedia(details.tabId, details.url, "network");
+  },
+  {
+    urls: ["http://*/*", "https://*/*"],
+    types: ["media", "xmlhttprequest", "other"]
+  }
+);
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  tabMedia.delete(tabId);
+});
 
 const buildRokuUrl = (ip, pathWithQuery = "") => {
   const trimmedIp = (ip || "").trim();
@@ -38,6 +88,12 @@ const tryLaunchViaInputEndpoint = async (ip, videoUrl) => {
 };
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type === "GET_TAB_MEDIA") {
+    const tabId = message?.payload?.tabId;
+    sendResponse({ ok: true, videos: tabMedia.get(tabId) || [] });
+    return false;
+  }
+
   if (message?.type !== "CAST_TO_ROKU") {
     return false;
   }

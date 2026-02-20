@@ -4,9 +4,11 @@
   "description": "Detects videos on pages and sends them to a Roku TV.",
   "version": "0.1.0",
   "permissions": [
-    "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest"
   ],
   "host_permissions": [
     "http://*/*",
@@ -28,7 +30,8 @@
       "js": [
         "content.js"
       ],
-      "run_at": "document_idle"
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ]
 }

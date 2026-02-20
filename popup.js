@@ -147,19 +147,30 @@ const runInlineMediaScan = async (tabId) => {
 };
 
 const requestVideosFromTab = async (tabId) => {
+  let viaContent = [];
   try {
     const response = await chrome.tabs.sendMessage(tabId, { type: "GET_VIDEOS" });
-    const viaContent = normalizeDetectedVideos(response?.videos || []);
-    if (viaContent.length) {
-      return viaContent;
-    }
+    viaContent = normalizeDetectedVideos(response?.videos || []);
   } catch (error) {
     if (!String(error?.message || "").includes("Receiving end does not exist")) {
       throw error;
     }
   }
 
-  return runInlineMediaScan(tabId);
+  const viaInline = await runInlineMediaScan(tabId);
+  const viaNetwork = await getNetworkDetectedVideos(tabId);
+
+  return normalizeDetectedVideos([...viaContent, ...viaInline, ...viaNetwork]);
+};
+
+
+const getNetworkDetectedVideos = async (tabId) => {
+  const response = await chrome.runtime.sendMessage({
+    type: "GET_TAB_MEDIA",
+    payload: { tabId }
+  });
+
+  return normalizeDetectedVideos(response?.videos || []);
 };
 
 const castToRoku = async (video) => {
@@ -234,7 +245,7 @@ const refreshVideos = async () => {
 
     const videos = await requestVideosFromTab(tab.id);
     renderVideos(videos);
-    setStatus(`Found ${videos.length} MP4/HLS source(s).`);
+    setStatus(`Found ${videos.length} source(s). If empty, start playback first, then Refresh.`);
   } catch (error) {
     renderVideos([]);
     setStatus(`Could not scan this tab: ${error.message}`, true);
