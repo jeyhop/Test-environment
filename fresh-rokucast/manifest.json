@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Fresh RokuCast Detector",
+  "description": "Detect MP4/HLS streams and cast to Roku",
+  "version": "1.0.0",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Fresh RokuCast"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ]
+}

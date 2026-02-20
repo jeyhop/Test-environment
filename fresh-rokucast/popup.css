@@ -1,0 +1,9 @@
+body { font-family: Arial, sans-serif; margin: 0; min-width: 390px; }
+main { padding: 12px; }
+.row { display: grid; gap: 8px; grid-template-columns: 1fr auto; }
+input, button { padding: 8px; border-radius: 8px; border: 1px solid #999; }
+#media { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+#media li { display: grid; grid-template-columns: 1fr auto; gap: 8px; border: 1px solid #bbb; border-radius: 8px; padding: 8px; }
+.title { font-weight: 700; margin: 0; font-size: 13px; }
+.url { margin: 4px 0 0; font-size: 11px; overflow-wrap: anywhere; }
+#status { min-height: 1.2em; }

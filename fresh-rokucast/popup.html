@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Fresh RokuCast</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Fresh RokuCast</h1>
+      <div class="row">
+        <input id="ip" placeholder="Roku IP e.g. 192.168.1.24" />
+        <button id="save">Save</button>
+      </div>
+      <p id="status"></p>
+      <button id="refresh">Refresh detection</button>
+      <ul id="media"></ul>
+    </main>
+    <template id="itemTpl">
+      <li>
+        <div>
+          <p class="title"></p>
+          <p class="url"></p>
+        </div>
+        <button class="cast">Cast</button>
+      </li>
+    </template>
+    <script src="popup.js"></script>
+  </body>
+</html>
