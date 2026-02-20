@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cast to Roku</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Cast to Roku</h1>
+
+      <label for="rokuIp">Roku IP address</label>
+      <div class="row">
+        <input id="rokuIp" type="text" placeholder="192.168.1.50" />
+        <button id="saveIp" type="button">Save</button>
+      </div>
+
+      <p id="status" role="status" aria-live="polite"></p>
+
+      <h2>Detected videos</h2>
+      <button id="refresh" type="button">Refresh</button>
+      <ul id="videoList"></ul>
+    </main>
+
+    <template id="videoTemplate">
+      <li>
+        <div class="video-meta">
+          <p class="video-title"></p>
+          <p class="video-url"></p>
+        </div>
+        <button class="cast-btn" type="button">Cast</button>
+      </li>
+    </template>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
