@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tax Folios | Bolivia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Interactive tax folio prototype</p>
+          <h1>Bolivia Tax Skill Tree</h1>
+          <p class="hero-copy">
+            A Final Fantasy-inspired interface for exploring how Bolivia's national,
+            departmental, and municipal tax layers connect.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <span id="country-pill" class="pill"></span>
+          <span id="updated-pill" class="pill pill-secondary"></span>
+        </div>
+      </header>
+
+      <main class="layout-grid">
+        <section class="tree-panel glass-card">
+          <div class="panel-header">
+            <div>
+              <p class="section-kicker">Tax map</p>
+              <h2>Interactive folio</h2>
+            </div>
+            <button id="reset-button" class="ghost-button">Reset selections</button>
+          </div>
+          <svg id="tree-canvas" viewBox="0 0 1200 760" aria-labelledby="tree-title" role="img">
+            <title id="tree-title">Bolivia tax skill tree</title>
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"></feGaussianBlur>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"></feMergeNode>
+                  <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+              </filter>
+            </defs>
+          </svg>
+        </section>
+
+        <aside class="sidebar-stack">
+          <section class="detail-panel glass-card">
+            <div class="panel-header compact">
+              <div>
+                <p class="section-kicker">Tax details</p>
+                <h2 id="detail-title">Select a node</h2>
+              </div>
+            </div>
+            <div id="detail-content" class="detail-content"></div>
+          </section>
+
+          <section class="summary-panel glass-card">
+            <div class="panel-header compact">
+              <div>
+                <p class="section-kicker">Revenue sandbox</p>
+                <h2>Selected contribution</h2>
+              </div>
+            </div>
+            <div id="summary-content" class="summary-content"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
