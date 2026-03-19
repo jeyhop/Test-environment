@@ -7,20 +7,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="hero">
+      <header class="hero ornate-frame">
         <div>
-          <p class="eyebrow">Interactive tax folio prototype</p>
-          <h1>Bolivia Tax Skill Tree</h1>
+          <p class="eyebrow">Folio prototype · Bolivia / tax architecture</p>
+          <h1>Bolivia Tax Folio</h1>
           <p class="hero-copy">
-            A Final Fantasy-inspired interface for exploring how Bolivia's national,
-            departmental, and municipal tax layers connect.
+            A folio-style tax interface inspired by high-fantasy skill trees: zoom into Bolivia's
+            national, departmental, and municipal tax structure, inspect each node, and model the
+            revenue share contributed by the currently selected taxes.
           </p>
         </div>
         <div class="hero-meta">
@@ -30,40 +31,95 @@
       </header>
 
       <main class="layout-grid">
-        <section class="tree-panel glass-card">
-          <div class="panel-header">
+        <section class="tree-panel glass-card ornate-frame">
+          <div class="panel-header folio-header">
             <div>
               <p class="section-kicker">Tax map</p>
               <h2>Interactive folio</h2>
             </div>
-            <button id="reset-button" class="ghost-button">Reset selections</button>
+            <div class="toolbar-cluster">
+              <div class="control-pod">
+                <span>Wheel</span>
+                <strong>Zoom</strong>
+              </div>
+              <div class="control-pod">
+                <span>Drag</span>
+                <strong>Pan</strong>
+              </div>
+              <button id="reset-view-button" class="ghost-button">Reset view</button>
+              <button id="reset-button" class="ghost-button">Select all</button>
+            </div>
           </div>
-          <svg id="tree-canvas" viewBox="0 0 1200 760" aria-labelledby="tree-title" role="img">
-            <title id="tree-title">Bolivia tax skill tree</title>
-            <defs>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"></feGaussianBlur>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"></feMergeNode>
-                  <feMergeNode in="SourceGraphic"></feMergeNode>
-                </feMerge>
-              </filter>
-            </defs>
-          </svg>
+
+          <div class="tree-hud">
+            <div class="hud-card">
+              <span class="hud-label">Active layers</span>
+              <strong id="active-count">0 / 0</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Selected revenue</span>
+              <strong id="selected-revenue">--</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Coverage</span>
+              <strong id="coverage-value">--</strong>
+            </div>
+          </div>
+
+          <div id="tree-viewport" class="tree-viewport" aria-label="Tax folio viewport">
+            <svg id="tree-canvas" viewBox="0 0 1400 900" aria-labelledby="tree-title" role="img">
+              <title id="tree-title">Bolivia tax skill tree</title>
+              <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="6" result="coloredBlur"></feGaussianBlur>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                  </feMerge>
+                </filter>
+                <radialGradient id="bgAura" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%" stop-color="rgba(245, 223, 164, 0.28)" />
+                  <stop offset="45%" stop-color="rgba(91, 154, 255, 0.12)" />
+                  <stop offset="100%" stop-color="rgba(5, 10, 18, 0)" />
+                </radialGradient>
+                <linearGradient id="goldLine" x1="0%" x2="100%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#fff9de" />
+                  <stop offset="50%" stop-color="#e7c878" />
+                  <stop offset="100%" stop-color="#8ea9ff" />
+                </linearGradient>
+              </defs>
+              <g class="background-layer rendered">
+                <circle cx="700" cy="440" r="320" class="constellation-ring ring-lg"></circle>
+                <circle cx="700" cy="440" r="220" class="constellation-ring ring-md"></circle>
+                <circle cx="700" cy="440" r="120" class="constellation-ring ring-sm"></circle>
+                <path class="compass-line" d="M700 80 L700 800 M250 440 L1150 440" />
+                <circle cx="700" cy="440" r="450" class="aura-disc"></circle>
+              </g>
+              <g id="pan-layer">
+                <g id="tree-layer"></g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="legend">
+            <span><i class="legend-dot legend-group"></i>Government layer</span>
+            <span><i class="legend-dot legend-tax"></i>Tax node</span>
+            <span><i class="legend-dot legend-selected"></i>Selected for revenue total</span>
+          </div>
         </section>
 
         <aside class="sidebar-stack">
-          <section class="detail-panel glass-card">
+          <section class="detail-panel glass-card ornate-frame">
             <div class="panel-header compact">
               <div>
-                <p class="section-kicker">Tax details</p>
-                <h2 id="detail-title">Select a node</h2>
+                <p class="section-kicker">Node details</p>
+                <h2 id="detail-title">Tax folio briefing</h2>
               </div>
             </div>
             <div id="detail-content" class="detail-content"></div>
           </section>
 
-          <section class="summary-panel glass-card">
+          <section class="summary-panel glass-card ornate-frame">
             <div class="panel-header compact">
               <div>
                 <p class="section-kicker">Revenue sandbox</p>
