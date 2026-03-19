@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bolivia Tax Folio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="folio-shell">
+      <div class="ornament ornament-top"></div>
+      <div class="ornament ornament-bottom"></div>
+
+      <header class="top-bar frame-panel">
+        <div class="status-chip">
+          <span class="chip-label">Country</span>
+          <strong id="country-pill">Bolivia</strong>
+        </div>
+
+        <div class="title-crest">
+          <span class="crest-side"></span>
+          <div>
+            <p class="section-kicker">Tax folio</p>
+            <h1>Bolivia Revenue Constellation</h1>
+          </div>
+          <span class="crest-side"></span>
+        </div>
+
+        <div class="status-chip status-chip-right">
+          <span class="chip-label">Updated</span>
+          <strong id="updated-pill"></strong>
+        </div>
+      </header>
+
+      <main class="folio-grid">
+        <aside class="side-column">
+          <section class="info-panel frame-panel dark-panel">
+            <p class="section-kicker">Selected node</p>
+            <h2 id="detail-title">All tax nodes active</h2>
+            <div id="detail-content" class="detail-content"></div>
+          </section>
+
+          <section class="summary-panel frame-panel dark-panel">
+            <div class="summary-head">
+              <div>
+                <p class="section-kicker">Selection state</p>
+                <h2>Revenue preview</h2>
+              </div>
+              <button id="reset-button" class="ornate-button">Select all</button>
+            </div>
+            <div id="summary-content" class="summary-content"></div>
+          </section>
+        </aside>
+
+        <section class="canvas-panel frame-panel parchment-panel">
+          <div class="canvas-toolbar">
+            <div class="toolbar-group">
+              <button data-zoom="in" class="toolbar-button" aria-label="Zoom in">+</button>
+              <button data-zoom="out" class="toolbar-button" aria-label="Zoom out">−</button>
+              <button id="recenter-button" class="toolbar-button wide">Recenter</button>
+            </div>
+            <p class="toolbar-hint">Drag to move · Scroll to zoom · Click a node to inspect or toggle it</p>
+          </div>
+
+          <div id="canvas-viewport" class="canvas-viewport" aria-label="Interactive Bolivia tax skill tree">
+            <svg id="tree-canvas" viewBox="0 0 1400 900" role="img" aria-labelledby="tree-title">
+              <title id="tree-title">Bolivia interactive tax folio</title>
+              <defs>
+                <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="6" result="blur"></feGaussianBlur>
+                  <feMerge>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                  </feMerge>
+                </filter>
+                <radialGradient id="parchment-light" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%" stop-color="#fbf4dd"></stop>
+                  <stop offset="100%" stop-color="#e5d4ac"></stop>
+                </radialGradient>
+                <pattern id="dot-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <circle cx="30" cy="30" r="1.5" fill="rgba(74, 47, 17, 0.16)"></circle>
+                </pattern>
+              </defs>
+              <rect x="0" y="0" width="1400" height="900" fill="url(#parchment-light)"></rect>
+              <rect x="0" y="0" width="1400" height="900" fill="url(#dot-grid)"></rect>
+              <g id="tree-backdrop"></g>
+              <g id="tree-stage"></g>
+            </svg>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
