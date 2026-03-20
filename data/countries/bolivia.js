@@ -1,9 +1,9 @@
 export const boliviaTaxData = {
   country: 'Bolivia',
   currency: 'BOB',
-  lastUpdated: '2026-03-18',
+  lastUpdated: '2026-03-19',
   notes:
-    "Prototype dataset for an editable tax folio. National rates are broadly stable, while some departmental and municipal rates can vary by local ordinance or assessed value brackets. Update this file as new official figures become available.",
+    "Prototype dataset for an editable tax folio. The node positions below are intentionally mapped to a two-cluster celestial layout so you can update Bolivia now and later swap in other countries without changing the renderer.",
   sources: [
     {
       label: 'Servicio de Impuestos Nacionales (national taxes overview)',
@@ -29,7 +29,7 @@ export const boliviaTaxData = {
       id: 'national',
       label: 'National Government',
       type: 'group',
-      position: { x: 290, y: 200 },
+      position: { x: 470, y: 270 },
       description: 'Core taxes administered centrally, mainly through the national tax authority.',
       taxes: [
         {
@@ -38,7 +38,7 @@ export const boliviaTaxData = {
           name: 'Impuesto al Valor Agregado',
           rate: '13%',
           revenue: 16840000000,
-          position: { x: 140, y: 430 },
+          position: { x: 220, y: 420 },
           description:
             'Value-added tax applied to sales of goods, services, and imports. The posted nominal rate is 13%.',
           scope: 'National',
@@ -49,12 +49,28 @@ export const boliviaTaxData = {
           source: 'SIN / PwC tax summary'
         },
         {
+          id: 'rciva',
+          label: 'RC-IVA',
+          name: 'Régimen Complementario al IVA',
+          rate: '13%',
+          revenue: 1820000000,
+          position: { x: 300, y: 745 },
+          description:
+            "Complementary regime linked to IVA, commonly affecting employment and certain personal income flows.",
+          scope: 'National',
+          notes: [
+            "Frequently treated as a withholding/creditable mechanism attached to invoice-backed deductions.",
+            "This prototype keeps it separate because it matters for explaining Bolivia's tax architecture."
+          ],
+          source: 'SIN / PwC tax summary'
+        },
+        {
           id: 'iue',
           label: 'IUE',
           name: 'Impuesto sobre las Utilidades de las Empresas',
           rate: '25%',
           revenue: 9610000000,
-          position: { x: 290, y: 500 },
+          position: { x: 455, y: 835 },
           description: 'Corporate income tax on company profits.',
           scope: 'National',
           notes: [
@@ -69,29 +85,13 @@ export const boliviaTaxData = {
           name: 'Impuesto a las Transacciones',
           rate: '3%',
           revenue: 5340000000,
-          position: { x: 440, y: 430 },
+          position: { x: 780, y: 530 },
           description:
             'Gross transactions tax generally applied to income from habitual business, trade, profession, or services.',
           scope: 'National',
           notes: [
             'Commonly levied on gross receipts at 3%.',
             'Can interact with IUE credits in some cases.'
-          ],
-          source: 'SIN / PwC tax summary'
-        },
-        {
-          id: 'rciva',
-          label: 'RC-IVA',
-          name: 'Régimen Complementario al IVA',
-          rate: '13%',
-          revenue: 1820000000,
-          position: { x: 290, y: 330 },
-          description:
-            "Complementary regime linked to IVA, commonly affecting employment and certain personal income flows.",
-          scope: 'National',
-          notes: [
-            "Frequently treated as a withholding/creditable mechanism attached to invoice-backed deductions.",
-            "This prototype keeps it separate because it matters for explaining Bolivia's tax architecture."
           ],
           source: 'SIN / PwC tax summary'
         }
@@ -101,7 +101,7 @@ export const boliviaTaxData = {
       id: 'departmental',
       label: 'Departmental Governments',
       type: 'group',
-      position: { x: 600, y: 170 },
+      position: { x: 940, y: 445 },
       description:
         "Taxes or revenue powers assigned to departmental governments, often narrower than national taxes.",
       taxes: [
@@ -111,7 +111,7 @@ export const boliviaTaxData = {
           name: 'Departmental taxes on gambling, games, and lotteries',
           rate: 'Varies by departmental rule / taxable event',
           revenue: 263000000,
-          position: { x: 600, y: 390 },
+          position: { x: 980, y: 720 },
           description:
             "Departments can participate in taxation tied to games of chance and related economic activities under Bolivia's decentralization framework.",
           scope: 'Departmental',
@@ -127,7 +127,7 @@ export const boliviaTaxData = {
       id: 'municipal',
       label: 'Municipal Governments',
       type: 'group',
-      position: { x: 930, y: 200 },
+      position: { x: 1185, y: 520 },
       description:
         'Municipal taxes usually focus on property, vehicles, and transfers, with collection handled locally or through RUAT-linked systems.',
       taxes: [
@@ -137,7 +137,7 @@ export const boliviaTaxData = {
           name: 'Impuesto Municipal a la Propiedad de Bienes Inmuebles',
           rate: 'Progressive / assessed-value based',
           revenue: 2890000000,
-          position: { x: 780, y: 430 },
+          position: { x: 1005, y: 325 },
           description:
             'Municipal real-estate property tax based on cadastral or assessed value schedules.',
           scope: 'Municipal',
@@ -153,7 +153,7 @@ export const boliviaTaxData = {
           name: 'Impuesto a la Propiedad de Vehículos Automotores',
           rate: 'Annual schedule by class, age, and value',
           revenue: 1010000000,
-          position: { x: 930, y: 500 },
+          position: { x: 1370, y: 355 },
           description:
             'Municipal annual vehicle ownership tax usually calculated from schedules that consider vehicle characteristics.',
           scope: 'Municipal',
@@ -169,7 +169,7 @@ export const boliviaTaxData = {
           name: 'Impuesto Municipal a las Transferencias',
           rate: '3%',
           revenue: 480000000,
-          position: { x: 1080, y: 430 },
+          position: { x: 1345, y: 760 },
           description: 'Municipal tax on transfers of real estate and vehicles.',
           scope: 'Municipal',
           notes: [

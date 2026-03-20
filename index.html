@@ -7,20 +7,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="hero">
+      <header class="hero ornate-frame">
         <div>
-          <p class="eyebrow">Interactive tax folio prototype</p>
-          <h1>Bolivia Tax Skill Tree</h1>
+          <p class="eyebrow">Folio prototype · Bolivia / tax architecture</p>
+          <h1>Bolivia Tax Folio</h1>
           <p class="hero-copy">
-            A Final Fantasy-inspired interface for exploring how Bolivia's national,
-            departmental, and municipal tax layers connect.
+            A celestial tax map for Bolivia: the national branch forms the left constellation,
+            departmental taxes bridge the folio, and municipal taxes orbit the main right-hand
+            revenue disc.
           </p>
         </div>
         <div class="hero-meta">
@@ -30,40 +31,117 @@
       </header>
 
       <main class="layout-grid">
-        <section class="tree-panel glass-card">
-          <div class="panel-header">
+        <section class="tree-panel glass-card ornate-frame">
+          <div class="panel-header folio-header">
             <div>
               <p class="section-kicker">Tax map</p>
               <h2>Interactive folio</h2>
             </div>
-            <button id="reset-button" class="ghost-button">Reset selections</button>
+            <div class="toolbar-cluster">
+              <div class="control-pod">
+                <span>Wheel</span>
+                <strong>Zoom</strong>
+              </div>
+              <div class="control-pod">
+                <span>Drag</span>
+                <strong>Pan</strong>
+              </div>
+              <button id="reset-view-button" class="ghost-button">Reset view</button>
+              <button id="reset-button" class="ghost-button">Select all</button>
+            </div>
           </div>
-          <svg id="tree-canvas" viewBox="0 0 1200 760" aria-labelledby="tree-title" role="img">
-            <title id="tree-title">Bolivia tax skill tree</title>
-            <defs>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"></feGaussianBlur>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"></feMergeNode>
-                  <feMergeNode in="SourceGraphic"></feMergeNode>
-                </feMerge>
-              </filter>
-            </defs>
-          </svg>
+
+          <div class="tree-hud">
+            <div class="hud-card">
+              <span class="hud-label">Active layers</span>
+              <strong id="active-count">0 / 0</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Selected revenue</span>
+              <strong id="selected-revenue">--</strong>
+            </div>
+            <div class="hud-card">
+              <span class="hud-label">Coverage</span>
+              <strong id="coverage-value">--</strong>
+            </div>
+          </div>
+
+          <div id="tree-viewport" class="tree-viewport" aria-label="Tax folio viewport">
+            <svg id="tree-canvas" viewBox="0 0 1600 980" aria-labelledby="tree-title" role="img">
+              <title id="tree-title">Bolivia tax skill tree</title>
+              <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="7" result="coloredBlur"></feGaussianBlur>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                  </feMerge>
+                </filter>
+                <radialGradient id="paperGlow" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%" stop-color="#eadfc6" stop-opacity="0.36" />
+                  <stop offset="100%" stop-color="#eadfc6" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="leftClusterGlow" cx="35%" cy="40%" r="60%">
+                  <stop offset="0%" stop-color="#87c5df" stop-opacity="0.23" />
+                  <stop offset="100%" stop-color="#87c5df" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="rightClusterGlow" cx="50%" cy="50%" r="66%">
+                  <stop offset="0%" stop-color="#df8ff3" stop-opacity="0.26" />
+                  <stop offset="100%" stop-color="#df8ff3" stop-opacity="0" />
+                </radialGradient>
+                <linearGradient id="leftLine" x1="0%" x2="100%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#d7bb7d" />
+                  <stop offset="100%" stop-color="#7fc1ff" />
+                </linearGradient>
+                <linearGradient id="rightLine" x1="0%" x2="100%" y1="0%" y2="100%">
+                  <stop offset="0%" stop-color="#f8d7ff" />
+                  <stop offset="100%" stop-color="#ba7df7" />
+                </linearGradient>
+              </defs>
+              <g class="background-layer rendered">
+                <rect x="0" y="0" width="1600" height="980" class="folio-paper"></rect>
+                <circle cx="430" cy="290" r="270" class="left-disc"></circle>
+                <circle cx="500" cy="770" r="150" class="left-disc small"></circle>
+                <circle cx="1120" cy="470" r="400" class="right-disc"></circle>
+                <circle cx="760" cy="500" r="520" class="paper-glow"></circle>
+                <circle cx="430" cy="290" r="210" class="chart-ring left-ring"></circle>
+                <circle cx="430" cy="290" r="140" class="chart-ring left-ring"></circle>
+                <circle cx="500" cy="770" r="92" class="chart-ring left-ring"></circle>
+                <circle cx="1120" cy="470" r="300" class="chart-ring right-ring"></circle>
+                <circle cx="1120" cy="470" r="220" class="chart-ring right-ring"></circle>
+                <circle cx="1120" cy="470" r="150" class="chart-ring right-ring"></circle>
+                <path class="chart-axis left-axis" d="M430 60 L430 520 M180 290 L680 290"></path>
+                <path class="chart-axis right-axis" d="M1120 110 L1120 830 M760 470 L1480 470"></path>
+                <path class="frame-ornament top" d="M60 34 H660 C720 34 740 14 800 14 C860 14 880 34 940 34 H1540"></path>
+                <path class="frame-ornament bottom" d="M60 946 H700 C750 946 770 968 800 968 C830 968 850 946 900 946 H1540"></path>
+                <path class="frame-ornament left" d="M36 60 V920"></path>
+                <path class="frame-ornament right" d="M1564 60 V920"></path>
+              </g>
+              <g id="pan-layer">
+                <g id="tree-layer"></g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="legend">
+            <span><i class="legend-dot legend-group"></i>Government layer</span>
+            <span><i class="legend-dot legend-tax"></i>Tax node</span>
+            <span><i class="legend-dot legend-selected"></i>Selected for revenue total</span>
+          </div>
         </section>
 
         <aside class="sidebar-stack">
-          <section class="detail-panel glass-card">
+          <section class="detail-panel glass-card ornate-frame">
             <div class="panel-header compact">
               <div>
-                <p class="section-kicker">Tax details</p>
-                <h2 id="detail-title">Select a node</h2>
+                <p class="section-kicker">Node details</p>
+                <h2 id="detail-title">Tax folio briefing</h2>
               </div>
             </div>
             <div id="detail-content" class="detail-content"></div>
           </section>
 
-          <section class="summary-panel glass-card">
+          <section class="summary-panel glass-card ornate-frame">
             <div class="panel-header compact">
               <div>
                 <p class="section-kicker">Revenue sandbox</p>
